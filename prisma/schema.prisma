@@ -7,22 +7,261 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum RoleUser {
   OWNER
   STAFF
+}
+
+enum RolePartner {
   CUSTOMER
   SELLER
 }
 
-model User {
-  id       String  @id @default(uuid())
-  fullname String
-  phone    String  @unique
-  password String
-  role     Role    @default(STAFF)
-  balance  Decimal @default(0)
-  isActive Boolean @default(false)
+enum Units {
+  KG
+  DONA
+  LITR
+  M2
+}
+
+enum State {
+  DONE
+  CANCELED
+}
+
+enum ContractStatus {
+  DONE
+  PENDING
+  RETURNED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+}
+
+enum PaymentType {
+  IN
+  OUT
+}
+
+model Region {
+  id        String  @id @default(uuid())
+  name      String
+  isDeleted Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  Partner Partner[]
+}
+
+model User {
+  id       String   @id @default(uuid())
+  fullname String
+  phone    String   @unique
+  password String
+  role     RoleUser @default(STAFF)
+  balance  Decimal  @default(0)
+  isActive Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Partner  Partner[]
+  Salary   Salary[]
+  Product  Product[]
+  Purchase Purchase[]
+  Contract Contract[]
+  Payment  Payment[]
+  Return   Return[]
+}
+
+model Salary {
+  id      String  @id @default(uuid())
+  amount  Decimal @default(0)
+  comment String?
+  userId  String
+  Staff   User    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Partner {
+  id       String   @id @default(uuid())
+  fullname String
+  phone    String   @unique
+  role     RoleUser @default(STAFF)
+  balance  Decimal  @default(0)
+  isActive Boolean  @default(false)
+  userId   String
+  regionId String
+  address  String
+
+  region    Region   @relation(fields: [regionId], references: [id])
+  createdBy User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Purchase Purchase[]
+  Contract Contract[]
+  Debt     Debt[]
+  Payment  Payment[]
+  Return   Return[]
+}
+
+model Category {
+  id        String  @id @default(uuid())
+  name      String
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Product Product[]
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  price       Decimal
+  cost        Decimal @default(0)
+  stock       Int
+  description String?
+  unit        Units
+  userId      String
+  categoryId  String
+  isDeleted   Boolean @default(false)
+  image       String
+
+  category  Category @relation(fields: [categoryId], references: [id])
+  createdBy User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  PurchaseItems PurchaseItems[]
+  ContractItems ContractItems[]
+}
+
+model Purchase {
+  id         String  @id @default(uuid())
+  userId     String
+  partnerId  String
+  note       String?
+  totalCount Int
+  totalPrice Decimal
+  state      State   @default(DONE)
+  user       User    @relation(fields: [userId], references: [id])
+  seller     Partner @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  PurchaseItems PurchaseItems[]
+}
+
+model PurchaseItems {
+  id         String   @id @default(uuid())
+  cost       Decimal
+  count      Int
+  productId  String
+  purchaseId String
+  product    Product  @relation(fields: [productId], references: [id])
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+}
+
+model Contract {
+  id         String         @id @default(uuid())
+  customer   Partner        @relation(fields: [partnerId], references: [id])
+  user       User           @relation(fields: [userId], references: [id])
+  partnerId  String
+  userId     String
+  totalPrice Decimal
+  prepayment Decimal        @default(0)
+  status     ContractStatus @default(PENDING)
+  time       Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ContractItems   ContractItems[]
+  PaymentSchedule PaymentSchedule[]
+  Return          Return[]
+}
+
+model ContractItems {
+  id         String   @id @default(uuid())
+  count      Int
+  price      Decimal
+  contractId String
+  productId  String
+  contract   Contract @relation(fields: [contractId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  ReturnItem ReturnItem[]
+}
+
+model PaymentSchedule {
+  id         String   @id @default(uuid())
+  contract   Contract @relation(fields: [contractId], references: [id])
+  contractId String
+  dueDate    DateTime
+  amount     Decimal
+  paid       Boolean  @default(false)
+  paidAt     DateTime @default(now())
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  partnerId     String
+  userId        String
+  debtId        String?
+  amount        Decimal
+  comment       String?
+  paymentMethod PaymentMethod
+  paymentType   PaymentType
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  debt    Debt?   @relation(fields: [debtId], references: [id])
+}
+
+model Debt {
+  id        String  @id @default(uuid())
+  partnerId String
+  total     Decimal
+  due       Decimal
+  customer  Partner @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Payment Payment[]
+}
+
+model Return {
+  id         String   @id @default(uuid())
+  contractId String
+  partnerId  String
+  createdBy  String
+  contract   Contract @relation(fields: [contractId], references: [id])
+  customer   Partner  @relation(fields: [partnerId], references: [id])
+  staff      User     @relation(fields: [createdBy], references: [id])
+  reason     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ReturnItem ReturnItem[]
+}
+
+model ReturnItem {
+  id              String        @id @default(uuid())
+  returnId        String
+  contractItemsId String
+  count           Int
+  restocked       Boolean       @default(true)
+  return          Return        @relation(fields: [returnId], references: [id])
+  contractItem    ContractItems @relation(fields: [contractItemsId], references: [id])
 }

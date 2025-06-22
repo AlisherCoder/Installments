@@ -1,0 +1,130 @@
+model User {
+  id        String   @id @default(uuid())
+  fullName  String
+  phone     String   @unique
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+enum Role {
+  OWNER
+  STAFF
+  CUSTOMER
+  SELLER
+}
+
+
+model Supplier {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  products  Product[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  // Chakana narx
+  cost        Decimal  // Ulgurji narx (supplier'dan)
+  stock       Int
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+
+model Customer {
+  id        String   @id @default(uuid())
+  fullName  String
+  phone     String   @unique
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id          String        @id @default(uuid())
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  userId      String        // Kim sotgan (staff)
+  user        User          @relation(fields: [userId], references: [id])
+  totalAmount Decimal
+  prepayment  Decimal       // Boshlang'ich to‘lov
+  status      OrderStatus   @default(PENDING)
+  createdAt   DateTime      @default(now())
+
+  items       OrderItem[]
+  payments    Payment[]
+  schedule    PaymentSchedule[]
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  price      Decimal  // Mahsulotni chakana narxi
+}
+
+
+model PaymentSchedule {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  dueDate   DateTime
+  amount    Decimal
+  paid      Boolean  @default(false)
+  paidAt    DateTime?
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  amount      Decimal
+  paidAt      DateTime @default(now())
+  createdById String   // staff id
+  createdBy   User     @relation(fields: [createdById], references: [id])
+}
+
+
+model Debt {
+  id        String   @id @default(uuid())
+  customerId String
+  customer  Customer @relation(fields: [customerId], references: [id])
+  total     Decimal
+  due       Decimal
+  updatedAt DateTime @updatedAt
+}
+
+
+model Return {
+  id         String      @id @default(uuid())
+  orderId    String
+  order      Order       @relation(fields: [orderId], references: [id])
+  customerId String
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  reason     String      // Brak, noto‘g‘ri model, fikridan qaytdi...
+  createdAt  DateTime    @default(now())
+  createdBy  String
+  staff      User        @relation(fields: [createdBy], references: [id])
+
+  items      ReturnItem[]
+}
+
+model ReturnItem {
+  id         String   @id @default(uuid())
+  returnId   String
+  return     Return   @relation(fields: [returnId], references: [id])
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id])
+  quantity   Int
+  restocked  Boolean  @default(true) // Omborga qaytadimi yoki yo‘q
+}
