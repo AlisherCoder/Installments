@@ -8,7 +8,7 @@ export class EskizeService {
   private email = process.env.EMAIL;
   private password = process.env.ESKIZ;
   constructor() {
-    this.auth;
+    // this.auth;
   }
 
   async auth() {
@@ -43,8 +43,8 @@ export class EskizeService {
         },
       );
     } catch (error) {
-      await this.auth();
-      await this.sendSms(message, phone);
+      // await this.auth();
+      // await this.sendSms(message, phone);
       throw new BadRequestException(error.message);
     }
   }

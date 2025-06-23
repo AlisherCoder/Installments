@@ -47,7 +47,7 @@ enum PaymentType {
 
 model Region {
   id        String  @id @default(uuid())
-  name      String
+  name      String  @unique
   isDeleted Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -82,6 +82,7 @@ model Salary {
   amount  Decimal @default(0)
   comment String?
   userId  String
+  state   State   @default(DONE)
   Staff   User    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
@@ -113,7 +114,7 @@ model Partner {
 
 model Category {
   id        String  @id @default(uuid())
-  name      String
+  name      String  @unique
   isDeleted Boolean @default(false)
 
   createdAt DateTime @default(now())
