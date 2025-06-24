@@ -90,12 +90,12 @@ model Salary {
 }
 
 model Partner {
-  id       String   @id @default(uuid())
+  id       String      @id @default(uuid())
   fullname String
-  phone    String   @unique
-  role     RoleUser @default(STAFF)
-  balance  Decimal  @default(0)
-  isActive Boolean  @default(false)
+  phone    String      @unique
+  role     RolePartner @default(CUSTOMER)
+  balance  Decimal     @default(0)
+  isActive Boolean     @default(true)
   userId   String
   regionId String
   address  String
@@ -115,6 +115,7 @@ model Partner {
 model Category {
   id        String  @id @default(uuid())
   name      String  @unique
+  time      Int
   isDeleted Boolean @default(false)
 
   createdAt DateTime @default(now())

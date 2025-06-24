@@ -40,6 +40,7 @@ export class RegionService {
     try {
       const data = await this.prisma.region.findMany({
         select: { id: true, name: true },
+        where: { isDeleted: false },
       });
 
       return { data };
@@ -66,7 +67,10 @@ export class RegionService {
 
   async remove(id: string) {
     try {
-      const data = await this.prisma.region.delete({ where: { id } });
+      const data = await this.prisma.region.update({
+        where: { id },
+        data: { isDeleted: true },
+      });
 
       if (!data) {
         throw new NotFoundException('Not found region');
