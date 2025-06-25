@@ -9,6 +9,7 @@ import {
   IsString,
   IsUUID,
   Matches,
+  Min,
 } from 'class-validator';
 
 export class CreatePartnerDto {
@@ -32,7 +33,7 @@ export class CreatePartnerDto {
   @ApiProperty({ example: 0, required: false })
   @IsOptional()
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   balance?: number;
 
   @ApiProperty({ example: 'Chilonzor 19', required: true })

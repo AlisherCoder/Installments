@@ -80,12 +80,14 @@ export class UserService {
         throw new NotFoundException('Not found user');
       }
 
-      const findPhone = await this.prisma.user.findUnique({
-        where: { phone },
-      });
+      if (phone && user.phone !== phone) {
+        const findPhone = await this.prisma.user.findUnique({
+          where: { phone },
+        });
 
-      if (findPhone) {
-        throw new ConflictException('User already exists with phone number');
+        if (findPhone) {
+          throw new ConflictException('User already exists with phone number');
+        }
       }
 
       if (password) {
@@ -116,7 +118,7 @@ export class UserService {
       }
 
       if (!user.isActive) {
-        throw new BadRequestException('User already not active');
+        throw new BadRequestException('User already is not active');
       }
 
       const data = await this.prisma.user.update({

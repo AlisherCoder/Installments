@@ -7,6 +7,7 @@ import { CreateSalaryDto } from './dto/create-salary.dto';
 import { UpdateSalaryDto } from './dto/update-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { State } from '@prisma/client';
+import { count } from 'console';
 
 @Injectable()
 export class SalaryService {
@@ -45,8 +46,9 @@ export class SalaryService {
   async findAll() {
     try {
       const data = await this.prisma.salary.findMany();
+      const total = await this.prisma.salary.count();
 
-      return { data };
+      return { data, count };
     } catch (error) {
       throw error;
     }

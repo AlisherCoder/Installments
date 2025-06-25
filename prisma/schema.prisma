@@ -129,13 +129,13 @@ model Product {
   name        String
   price       Decimal
   cost        Decimal @default(0)
-  stock       Int
+  stock       Int     @default(0)
   description String?
   unit        Units
   userId      String
   categoryId  String
   isDeleted   Boolean @default(false)
-  image       String
+  image       String?
 
   category  Category @relation(fields: [categoryId], references: [id])
   createdBy User     @relation(fields: [userId], references: [id])

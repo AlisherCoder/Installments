@@ -9,16 +9,27 @@ import { RegionModule } from './region/region.module';
 import { UserModule } from './user/user.module';
 import { SalaryModule } from './salary/salary.module';
 import { PartnerModule } from './partner/partner.module';
-
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { UploadModule } from './upload/upload.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/file',
+    }),
     PrismaModule,
     AuthModule,
     RegionModule,
     UserModule,
     SalaryModule,
     PartnerModule,
+    CategoryModule,
+    ProductModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService, EskizeService],
