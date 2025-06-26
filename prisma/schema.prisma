@@ -164,13 +164,14 @@ model Purchase {
 }
 
 model PurchaseItems {
-  id         String   @id @default(uuid())
-  cost       Decimal
-  count      Int
-  productId  String
-  purchaseId String
-  product    Product  @relation(fields: [productId], references: [id])
-  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  id           String   @id @default(uuid())
+  cost         Decimal
+  previousCost Decimal?
+  count        Int
+  productId    String
+  purchaseId   String
+  product      Product  @relation(fields: [productId], references: [id])
+  purchase     Purchase @relation(fields: [purchaseId], references: [id])
 }
 
 model Contract {

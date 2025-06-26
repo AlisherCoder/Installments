@@ -3,6 +3,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import { join } from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProductService {
@@ -36,6 +38,7 @@ export class ProductService {
     try {
       const data = await this.prisma.product.findMany({
         include: { category: true },
+        where: { isDeleted: false },
       });
 
       const total = await this.prisma.product.count();
@@ -48,7 +51,9 @@ export class ProductService {
 
   async findOne(id: string) {
     try {
-      const data = await this.prisma.product.findUnique({ where: { id } });
+      const data = await this.prisma.product.findUnique({
+        where: { id, isDeleted: false },
+      });
 
       if (!data) {
         throw new NotFoundException('Not found product');
@@ -63,7 +68,9 @@ export class ProductService {
   async update(id: string, updateProductDto: UpdateProductDto) {
     const { categoryId, image } = updateProductDto;
     try {
-      const product = await this.prisma.product.findUnique({ where: { id } });
+      const product = await this.prisma.product.findUnique({
+        where: { id, isDeleted: false },
+      });
 
       if (!product) {
         throw new NotFoundException('Not found product');
@@ -84,6 +91,10 @@ export class ProductService {
         data: updateProductDto,
       });
 
+      if (data && image && product.image) {
+        this.deleteUploadedFile(product.image);
+      }
+
       return { data };
     } catch (error) {
       throw error;
@@ -92,8 +103,37 @@ export class ProductService {
 
   async remove(id: string) {
     try {
+      const product = await this.prisma.product.findUnique({
+        where: { id, isDeleted: false },
+      });
+
+      if (!product) {
+        throw new NotFoundException('Not found product');
+      }
+
+      const data = await this.prisma.product.update({
+        where: { id },
+        data: { isDeleted: true },
+      });
+
+      if (data && product.image) {
+        this.deleteUploadedFile(product.image);
+      }
+
+      return { data };
     } catch (error) {
       throw error;
+    }
+  }
+
+  async deleteUploadedFile(filename: string) {
+    const filePath = join(process.cwd(), 'uploads', filename);
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`✅ Fayl o'chirildi: ${filePath}`);
+    } else {
+      console.warn(`⚠️ Fayl topilmadi: ${filePath}`);
     }
   }
 }

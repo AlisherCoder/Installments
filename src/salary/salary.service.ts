@@ -48,7 +48,7 @@ export class SalaryService {
       const data = await this.prisma.salary.findMany();
       const total = await this.prisma.salary.count();
 
-      return { data, count };
+      return { data, total };
     } catch (error) {
       throw error;
     }

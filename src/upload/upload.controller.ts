@@ -41,7 +41,6 @@ export class UploadController {
     }),
   )
   uploadFile(@UploadedFile() file) {
-    console.log(file);
     return { data: file?.filename };
   }
 }

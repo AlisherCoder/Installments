@@ -14,6 +14,8 @@ import { ProductModule } from './product/product.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { UploadModule } from './upload/upload.module';
+import { PurchaseModule } from './purchase/purchase.module';
+import { ContractModule } from './contract/contract.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -30,6 +32,8 @@ import { UploadModule } from './upload/upload.module';
     CategoryModule,
     ProductModule,
     UploadModule,
+    PurchaseModule,
+    ContractModule,
   ],
   controllers: [AppController],
   providers: [AppService, EskizeService],
