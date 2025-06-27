@@ -27,7 +27,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   description?: string;
 
-  @ApiProperty({ enum: Units, required: true })
+  @ApiProperty({ enum: Units, default: Units.DONA, required: true })
   @IsEnum(Units)
   unit: Units;
 

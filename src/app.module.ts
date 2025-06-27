@@ -16,6 +16,8 @@ import { join } from 'path';
 import { UploadModule } from './upload/upload.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { ContractModule } from './contract/contract.module';
+import { DebtModule } from './debt/debt.module';
+import { PaymentModule } from './payment/payment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -34,6 +36,8 @@ import { ContractModule } from './contract/contract.module';
     UploadModule,
     PurchaseModule,
     ContractModule,
+    DebtModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService, EskizeService],
