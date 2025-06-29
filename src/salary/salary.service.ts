@@ -8,6 +8,7 @@ import { UpdateSalaryDto } from './dto/update-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { State } from '@prisma/client';
 import { count } from 'console';
+import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class SalaryService {
@@ -43,7 +44,20 @@ export class SalaryService {
     }
   }
 
-  async findAll() {
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      orderBy = 'desc',
+      sortBy = 'createdAt',
+      userId,
+      state = 'DONE',
+      dateFrom,
+      dateTo,
+    } = dto;
+
+    const query: any = { state };
+
     try {
       const data = await this.prisma.salary.findMany();
       const total = await this.prisma.salary.count();

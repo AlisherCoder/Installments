@@ -25,7 +25,7 @@ export class CreateContractDto {
   @ApiProperty({ example: 0, required: false })
   @IsOptional()
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   prepayment?: number;
 
   @ApiProperty({ example: 3, required: true })

@@ -18,7 +18,6 @@ import { PurchaseModule } from './purchase/purchase.module';
 import { ContractModule } from './contract/contract.module';
 import { DebtModule } from './debt/debt.module';
 import { PaymentModule } from './payment/payment.module';
-import { PaymentscheduleModule } from './paymentschedule/paymentschedule.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -39,7 +38,6 @@ import { PaymentscheduleModule } from './paymentschedule/paymentschedule.module'
     ContractModule,
     DebtModule,
     PaymentModule,
-    PaymentscheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService, EskizeService],

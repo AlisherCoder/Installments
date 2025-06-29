@@ -6,10 +6,15 @@ import {
 import { CreateContractDto } from './dto/create-contract.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import { PaymentscheduleService } from 'src/paymentschedule/paymentschedule.service';
+import { UpdateContractDto } from './dto/update-contract.dto';
 
 @Injectable()
 export class ContractService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private schedule: PaymentscheduleService,
+  ) {}
 
   async create(createContractDto: CreateContractDto, req: Request) {
     const { products, ...body } = createContractDto;
@@ -19,7 +24,7 @@ export class ContractService {
         where: { id: body.partnerId, role: 'CUSTOMER' },
       });
 
-      if (!customer) throw new NotFoundException('Not found customer');
+      if (!customer) throw new NotFoundException('Customer with ID not found');
 
       const warehouse = (
         await this.prisma.product.findMany({
@@ -74,12 +79,23 @@ export class ContractService {
           },
         });
 
+        const schedules = this.schedule.create({
+          debtId: debt.id,
+          contractId: contract.id,
+          amount: debt.total,
+          time: contract.time,
+        });
+
+        const paymentSchedules = await tx.paymentSchedule.createManyAndReturn({
+          data: schedules,
+        });
+
         await tx.partner.update({
           where: { id: customer.id },
           data: { balance: { decrement: debt.due } },
         });
 
-        return { contract, debt };
+        return { contract, debt, paymentSchedules };
       });
 
       return { data };
@@ -107,6 +123,20 @@ export class ContractService {
       }
 
       return { data };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(id: string, updateContractDto: UpdateContractDto) {
+    try {
+      const contract = await this.prisma.contract.findUnique({
+        where: { id, status: 'PENDING' },
+      });
+
+      if (!contract) {
+        throw new NotFoundException('Not found contract');
+      }
     } catch (error) {
       throw error;
     }

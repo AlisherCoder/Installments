@@ -3,15 +3,17 @@ import { PaymentMethod, PaymentType } from '@prisma/client';
 import {
   IsEnum,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   IsUUID,
 } from 'class-validator';
 
 export class CreatePaymentDto {
-  @ApiProperty({ example: 'partnerId', required: true })
+  @ApiProperty({ example: 'partnerId', required: false })
+  @IsOptional()
   @IsUUID()
-  partnerId: string;
+  partnerId?: string;
 
   @ApiProperty({ example: 0, required: true })
   @IsNumber()
@@ -19,10 +21,11 @@ export class CreatePaymentDto {
   amount: number;
 
   @ApiProperty({ example: 'debtId', required: false })
+  @IsOptional()
   @IsUUID()
   debtId?: string;
 
-  @ApiProperty({ example: 'optional comment', required: false })
+  @ApiProperty({ example: 'comment', required: false })
   @IsString()
   comment?: string;
 
@@ -31,6 +34,6 @@ export class CreatePaymentDto {
   paymentMethod: PaymentMethod;
 
   @ApiProperty({ enum: PaymentType, required: true })
-  @IsEnum(PaymentMethod)
+  @IsEnum(PaymentType)
   paymentType: PaymentType;
 }

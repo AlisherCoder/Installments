@@ -54,20 +54,23 @@ export class PurchaseService {
         });
 
         for (const item of products) {
-          const prd = await tx.product.findUnique({
+          const prd: any = await tx.product.findUnique({
             where: { id: item.productId, isDeleted: false },
           });
 
-          if (prd) {
-            const currentSum = prd.stock * prd.cost.toNumber();
-            const newSum = item.count * item.cost;
-            const avgCost = (currentSum + newSum) / (prd.stock + item.count);
+          const currentSum = prd.stock * prd.cost.toNumber();
+          const newSum = item.count * item.cost;
+          const avgCost = (currentSum + newSum) / (prd.stock + item.count);
 
-            await tx.product.update({
-              where: { id: item.productId },
-              data: { stock: { increment: item.count }, cost: avgCost },
-            });
-          }
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.count }, cost: avgCost },
+          });
+
+          await tx.partner.update({
+            where: { id: body.partnerId },
+            data: { balance: { decrement: body.totalPrice } },
+          });
         }
 
         return purchase;

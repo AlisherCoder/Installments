@@ -41,7 +41,9 @@ export class ProductService {
         where: { isDeleted: false },
       });
 
-      const total = await this.prisma.product.count();
+      const total = await this.prisma.product.count({
+        where: { isDeleted: false },
+      });
 
       return { data, total };
     } catch (error) {

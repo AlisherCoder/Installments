@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class UserService {
@@ -35,18 +36,36 @@ export class UserService {
     }
   }
 
-  async findAll() {
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      orderBy = 'desc',
+      sortBy = 'createdAt',
+      isActive = true,
+      role = 'STAFF',
+      fullname,
+      phone,
+    } = dto;
+    const query: any = { role };
+
+    if (fullname) query.fullname = { mode: 'insensitive', contains: fullname };
+    if (phone) query.phone = { mode: 'insensitive', contains: phone };
+    if (isActive == 'true') query.isActive = true;
+    if (isActive == 'false') query.isActive = false;
+
     try {
       const data = await this.prisma.user.findMany({
         omit: { password: true },
-        where: { role: 'STAFF' },
+        where: query,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { [sortBy]: orderBy },
       });
 
-      const total = await this.prisma.user.count({
-        where: { role: 'STAFF' },
-      });
-
-      return { data, total };
+      const totalPage = Math.ceil(data.length / limit);
+      const total = data.length;
+      return { data, totalPage, total };
     } catch (error) {
       throw error;
     }
@@ -57,6 +76,7 @@ export class UserService {
       const user = await this.prisma.user.findUnique({
         where: { id },
         omit: { password: true },
+        include: { Contract: true, Payment: true, Purchase: true },
       });
 
       if (!user) {

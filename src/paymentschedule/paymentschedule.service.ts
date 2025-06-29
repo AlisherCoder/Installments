@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePaymentscheduleDto } from './dto/create-paymentschedule.dto';
-import { UpdatePaymentscheduleDto } from './dto/update-paymentschedule.dto';
+import { addMonths } from 'date-fns';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PaymentscheduleService {
-  create(createPaymentscheduleDto: CreatePaymentscheduleDto) {
-    return 'This action adds a new paymentschedule';
-  }
+  create(data: any) {
+    const { contractId, debtId, time, amount } = data;
 
-  findAll() {
-    return `This action returns all paymentschedule`;
-  }
+    try {
+      const monthlyAmount = new Prisma.Decimal(amount).div(time);
 
-  findOne(id: number) {
-    return `This action returns a #${id} paymentschedule`;
-  }
+      const schedules: any = [];
 
-  update(id: number, updatePaymentscheduleDto: UpdatePaymentscheduleDto) {
-    return `This action updates a #${id} paymentschedule`;
-  }
+      for (let i = 1; i <= time; i++) {
+        schedules.push({
+          contractId,
+          debtId,
+          dueDate: addMonths(new Date(), i),
+          amount: monthlyAmount,
+        });
+      }
 
-  remove(id: number) {
-    return `This action removes a #${id} paymentschedule`;
+      return schedules;
+    } catch (error) {
+      throw error;
+    }
   }
 }

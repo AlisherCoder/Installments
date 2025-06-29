@@ -6,10 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CommonApiQueries } from 'src/Common/api.decorator';
+import { ApiQuery } from '@nestjs/swagger';
+import { RoleUser } from '@prisma/client';
+import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Controller('user')
 export class UserController {
@@ -21,8 +26,18 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  @CommonApiQueries()
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['createdAt', 'fullname'],
+  })
+  @ApiQuery({ name: 'isActive', required: false, enum: ['true', 'false'] })
+  @ApiQuery({ name: 'phone', required: false, type: String })
+  @ApiQuery({ name: 'fullname', required: false, type: String })
+  @ApiQuery({ name: 'role', required: false, enum: RoleUser })
+  findAll(@Query() dto: BaseSearchDto) {
+    return this.userService.findAll(dto);
   }
 
   @Get(':id')

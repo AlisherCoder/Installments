@@ -6,7 +6,9 @@ export class DebtService {
   constructor(private prisma: PrismaService) {}
   async findAll() {
     try {
-      const data = await this.prisma.debt.findMany();
+      const data = await this.prisma.debt.findMany({
+        include: { PaymentSchedule: true },
+      });
 
       return { data };
     } catch (error) {
