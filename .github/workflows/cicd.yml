@@ -45,5 +45,6 @@ jobs:
             source "$NVM_DIR/nvm.sh"
             cd /home/***/nestjs-app
             npm install --omit=dev
+            npx prisma generete
+            npx prisma migrate deploy
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
-
