@@ -24,17 +24,17 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy files to AWS Lightsail
+      - name: Copy files to Lightsail
         uses: appleboy/scp-action@v0.1.6
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           port: 22
-          source: 'dist/*,package.json,ecosystem.config.js'
+          source: 'dist/**,package.json,ecosystem.config.js,prisma/**'
           target: '/home/ubuntu/nestjs-app'
 
-      - name: Restart App on Lightsail via SSH
+      - name: SSH Deploy Commands
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
@@ -43,8 +43,8 @@ jobs:
           script: |
             export NVM_DIR="$HOME/.nvm"
             source "$NVM_DIR/nvm.sh"
-            cd /home/***/nestjs-app
+            cd /home/ubuntu/nestjs-app
             npm install --omit=dev
-            npx prisma generete
+            npx prisma generate
             npx prisma migrate deploy
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
