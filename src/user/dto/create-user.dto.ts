@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleUser } from '@prisma/client';
+import { RoleUser } from '../../Common/enums';
 import {
   IsEnum,
   IsNotEmpty,
