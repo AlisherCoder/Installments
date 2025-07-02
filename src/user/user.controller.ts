@@ -33,8 +33,6 @@ export class UserController {
     enum: ['createdAt', 'fullname'],
   })
   @ApiQuery({ name: 'isActive', required: false, enum: ['true', 'false'] })
-  @ApiQuery({ name: 'phone', required: false, type: String })
-  @ApiQuery({ name: 'fullname', required: false, type: String })
   @ApiQuery({ name: 'role', required: false, enum: RoleUser })
   findAll(@Query() dto: BaseSearchDto) {
     return this.userService.findAll(dto);

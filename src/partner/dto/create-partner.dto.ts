@@ -1,16 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RolePartner } from '@prisma/client';
+import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   IsUUID,
   Matches,
   Min,
+  ValidateNested,
 } from 'class-validator';
+
+class Location {
+  @Type(() => Number)
+  @IsNumber()
+  lat: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  long: number;
+}
 
 export class CreatePartnerDto {
   @ApiProperty({ example: 'Jorj Oruel', required: true })
@@ -36,12 +47,19 @@ export class CreatePartnerDto {
   @Min(0)
   balance?: number;
 
-  @ApiProperty({ example: 'Chilonzor 19', required: true })
+  @ApiProperty({ example: 'Chilonzor 19', required: false })
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  address: string;
+  address?: string;
 
   @ApiProperty({ example: 'regionId', required: true })
   @IsUUID()
   regionId: string;
+
+  @ApiProperty({ example: { lat: 23.21, long: 32.22 }, required: false })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => Location)
+  location?: Location;
 }

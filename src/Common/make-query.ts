@@ -6,6 +6,4 @@ export function makeQuery(data: any) {
     isActive = true,
     role = 'CUSTOMER',
   } = data;
-
-  
 }

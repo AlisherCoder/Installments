@@ -8,6 +8,8 @@ import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import { BaseSearchDto } from 'src/Common/query.dto';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class PartnerService {
@@ -25,16 +27,22 @@ export class PartnerService {
         throw new ConflictException('Partner already exists with phone number');
       }
 
-      const region = await this.prisma.region.findUnique({
-        where: { id: regionId, isDeleted: false },
-      });
+      if (regionId) {
+        const region = await this.prisma.region.findUnique({
+          where: { id: regionId, isDeleted: false },
+        });
 
-      if (!region) {
-        throw new NotFoundException('Not found region or region is deleted');
+        if (!region) {
+          throw new NotFoundException('Not found region or region is deleted');
+        }
       }
 
       const data = await this.prisma.partner.create({
-        data: { ...createPartnerDto, userId: user.id },
+        data: {
+          ...createPartnerDto,
+          userId: user.id,
+          location: {} as Prisma.InputJsonValue,
+        },
       });
 
       return { data };
@@ -43,10 +51,55 @@ export class PartnerService {
     }
   }
 
-  async findAll() {
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'balance',
+      orderBy = 'asc',
+      isActive = true,
+      isArchive = false,
+      // role = 'CUSTOMER',
+      search,
+    } = dto;
+
+    let query: any = {};
+
+    if (isActive === 'true') query.isActive = true;
+    if (isActive === 'false') query.isActive = false;
+    if (isArchive === 'true') query.isArchive = true;
+    if (isArchive === 'false') query.isArchive = false;
+
+    if (search) {
+      const trimmed = search.trim();
+      query.OR = [
+        {
+          fullname: {
+            contains: trimmed,
+            mode: 'insensitive',
+          },
+        },
+        {
+          phone: {
+            contains: trimmed,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+
     try {
-      const data = await this.prisma.partner.findMany();
-      const total = await this.prisma.partner.count();
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.partner.findMany({
+          where: query,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: {
+            [sortBy]: orderBy,
+          },
+        }),
+        this.prisma.partner.count({ where: query }),
+      ]);
 
       return { data, total };
     } catch (error) {
@@ -99,9 +152,13 @@ export class PartnerService {
         }
       }
 
+      const cleanDto = Object.fromEntries(
+        Object.entries(updatePartnerDto).filter(([_, v]) => v !== undefined),
+      );
+
       const data = await this.prisma.partner.update({
         where: { id },
-        data: updatePartnerDto,
+        data: cleanDto,
       });
 
       return { data };

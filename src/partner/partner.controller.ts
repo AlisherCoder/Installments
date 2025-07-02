@@ -8,12 +8,17 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PartnerService } from './partner.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { Request } from 'express';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { BaseSearchDto } from 'src/Common/query.dto';
+import { CommonApiQueries } from 'src/Common/api.decorator';
+import { ApiQuery } from '@nestjs/swagger';
+import { RolePartner } from '@prisma/client';
 
 @Controller('partner')
 export class PartnerController {
@@ -26,8 +31,17 @@ export class PartnerController {
   }
 
   @Get()
-  findAll() {
-    return this.partnerService.findAll();
+  @CommonApiQueries()
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['createdAt', 'fullname', 'balance'],
+  })
+  @ApiQuery({ name: 'isActive', required: false, enum: ['true', 'false'] })
+  @ApiQuery({ name: 'isArchive', required: false, enum: ['true', 'false'] })
+  @ApiQuery({ name: 'role', required: false, enum: RolePartner })
+  findAll(@Query() dto: BaseSearchDto) {
+    return this.partnerService.findAll(dto);
   }
 
   @Get(':id')

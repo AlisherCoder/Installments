@@ -40,6 +40,11 @@ export class BaseSearchDto {
   isActive?: string;
 
   @IsOptional()
+  @IsEnum(['true', 'false'])
+  @IsNotEmpty()
+  isArchive?: string;
+
+  @IsOptional()
   @IsEnum(['asc', 'desc'])
   orderBy?: 'asc' | 'desc';
 
@@ -75,4 +80,8 @@ export class BaseSearchDto {
   @IsOptional()
   @IsEnum(State)
   state?: State;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

@@ -90,15 +90,17 @@ model Salary {
 }
 
 model Partner {
-  id       String      @id @default(uuid())
-  fullname String
-  phone    String      @unique
-  role     RolePartner @default(CUSTOMER)
-  balance  Decimal     @default(0)
-  isActive Boolean     @default(true)
-  userId   String
-  regionId String
-  address  String
+  id        String      @id @default(uuid())
+  fullname  String
+  phone     String      @unique
+  role      RolePartner @default(CUSTOMER)
+  balance   Decimal     @default(0)
+  isActive  Boolean     @default(true)
+  isArchive Boolean     @default(false)
+  userId    String
+  regionId  String
+  address   String?
+  location  Json?
 
   region    Region   @relation(fields: [regionId], references: [id])
   createdBy User     @relation(fields: [userId], references: [id])
