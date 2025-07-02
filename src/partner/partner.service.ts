@@ -59,12 +59,13 @@ export class PartnerService {
       orderBy = 'asc',
       isActive = true,
       isArchive = false,
-      // role = 'CUSTOMER',
+      role,
       search,
     } = dto;
 
     let query: any = {};
 
+    if (role) query.role = role;
     if (isActive === 'true') query.isActive = true;
     if (isActive === 'false') query.isActive = false;
     if (isArchive === 'true') query.isArchive = true;
