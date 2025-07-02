@@ -93,7 +93,7 @@ model Partner {
   id          String      @id @default(uuid())
   fullname    String
   phone       String      @unique
-  secondPhone String?     @unique
+  secondPhone String?
   role        RolePartner @default(CUSTOMER)
   balance     Decimal     @default(0)
   isActive    Boolean     @default(true)

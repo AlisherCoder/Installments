@@ -16,7 +16,7 @@ export class PartnerService {
   constructor(private prisma: PrismaService) {}
 
   async create(createPartnerDto: CreatePartnerDto, req: Request) {
-    const { phone, regionId } = createPartnerDto;
+    const { phone, regionId, location } = createPartnerDto;
     const user = req['user'];
     try {
       const partner = await this.prisma.partner.findUnique({
@@ -43,7 +43,7 @@ export class PartnerService {
         data: {
           ...createPartnerDto,
           userId: user.id,
-          location: {} as Prisma.InputJsonValue,
+          location: location ? ({ ...location } as Prisma.InputJsonValue) : {},
         },
       });
 
@@ -57,8 +57,8 @@ export class PartnerService {
     const {
       page = 1,
       limit = 10,
-      sortBy = 'balance',
-      orderBy = 'asc',
+      sortBy = 'createdAt',
+      orderBy = 'desc',
       isActive = true,
       isArchive = false,
       role,
