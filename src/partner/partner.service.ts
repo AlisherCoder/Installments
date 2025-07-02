@@ -97,6 +97,7 @@ export class PartnerService {
           orderBy: {
             [sortBy]: orderBy,
           },
+          include: { region: true },
         }),
         this.prisma.partner.count({ where: query }),
       ]);
