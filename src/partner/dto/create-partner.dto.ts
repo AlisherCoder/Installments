@@ -37,15 +37,24 @@ export class CreatePartnerDto {
   })
   phone: string;
 
+  @ApiProperty({ example: '+998951234555', required: false })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\+998[0-9]{2}\d{7}$/, {
+    message: 'The phone number format must be only: +998901234567.',
+  })
+  secondPhone: string;
+
   @ApiProperty({ enum: RolePartner, required: true })
   @IsEnum(RolePartner)
   role: RolePartner;
 
-  @ApiProperty({ example: 0, required: false })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  balance?: number;
+  // @ApiProperty({ example: 0, required: false })
+  // @IsOptional()
+  // @IsNumber()
+  // @Min(0)
+  // balance?: number;
 
   @ApiProperty({ example: 'Chilonzor 19', required: false })
   @IsOptional()

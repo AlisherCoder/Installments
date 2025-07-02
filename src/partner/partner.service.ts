@@ -24,7 +24,9 @@ export class PartnerService {
       });
 
       if (partner) {
-        throw new ConflictException('Partner already exists with phone number');
+        throw new ConflictException(
+          'Partner already exists with phone number ' + phone,
+        );
       }
 
       if (regionId) {
