@@ -88,9 +88,6 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "resolutions": {
     "file-type": "20.1.0"
   }
