@@ -97,9 +97,7 @@ export class PartnerService {
           where: query,
           skip: (page - 1) * limit,
           take: limit,
-          orderBy: {
-            [sortBy]: orderBy,
-          },
+          orderBy: [{ pin: orderBy }, { [sortBy]: orderBy }],
           include: { region: true },
         }),
         this.prisma.partner.count({ where: query }),

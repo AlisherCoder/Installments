@@ -10,10 +10,9 @@ import {
 } from 'class-validator';
 
 export class CreatePaymentDto {
-  @ApiProperty({ example: 'partnerId', required: false })
-  @IsOptional()
+  @ApiProperty({ example: 'partnerId', required: true })
   @IsUUID()
-  partnerId?: string;
+  partnerId: string;
 
   @ApiProperty({ example: 0, required: true })
   @IsNumber()

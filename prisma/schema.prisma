@@ -38,6 +38,7 @@ enum ContractStatus {
 enum PaymentMethod {
   CASH
   CARD
+  BALANCE
 }
 
 enum PaymentType {
@@ -103,7 +104,7 @@ model Partner {
   address     String?
   location    Json?
   pin         Boolean     @default(false)
-  paidToday   Boolean     @default(false)
+  paidToday   DateTime?
 
   region    Region   @relation(fields: [regionId], references: [id])
   createdBy User     @relation(fields: [userId], references: [id])
@@ -241,7 +242,7 @@ model PaymentSchedule {
 
 model Payment {
   id            String        @id @default(uuid())
-  partnerId     String?
+  partnerId     String
   userId        String
   debtId        String?
   amount        Decimal

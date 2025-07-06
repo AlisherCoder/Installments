@@ -7,4 +7,14 @@ export class UpdatePartnerDto extends PartialType(CreatePartnerDto) {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ApiProperty({ example: false, required: false })
+  @IsOptional()
+  @IsBoolean()
+  pin?: boolean;
+
+  @ApiProperty({ example: false, required: false })
+  @IsOptional()
+  @IsBoolean()
+  isArchive?: boolean;
 }
