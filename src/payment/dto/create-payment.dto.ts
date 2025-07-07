@@ -25,6 +25,7 @@ export class CreatePaymentDto {
   debtId?: string;
 
   @ApiProperty({ example: 'comment', required: false })
+  @IsOptional()
   @IsString()
   comment?: string;
 
