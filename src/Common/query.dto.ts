@@ -1,4 +1,4 @@
-import { State } from '@prisma/client';
+import { ContractStatus, PaymentMethod, PaymentType, State } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsDate,
@@ -78,8 +78,32 @@ export class BaseSearchDto {
   userId?: string;
 
   @IsOptional()
+  @IsUUID()
+  partnerId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  productId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  categoryId?: string;
+
+  @IsOptional()
   @IsEnum(State)
   state?: State;
+
+  @IsOptional()
+  @IsEnum(ContractStatus)
+  status?: ContractStatus;
+
+  @IsOptional()
+  @IsEnum(PaymentMethod)
+  paymentMethod?: PaymentMethod;
+
+  @IsOptional()
+  @IsEnum(PaymentType)
+  paymentType?: PaymentType;
 
   @IsOptional()
   @IsString()

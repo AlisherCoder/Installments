@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaymentMethod, PaymentType } from '@prisma/client';
-import {
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
 
 export class CreatePaymentDto {
   @ApiProperty({ example: 'partnerId', required: true })

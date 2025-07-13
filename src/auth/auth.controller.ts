@@ -1,11 +1,6 @@
 import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  LoginDto,
-  RefreshTokenDto,
-  ResetPasswordDto,
-  SendOtpDto,
-} from './dto/auth.dto';
+import { LoginDto, RefreshTokenDto, ResetPasswordDto, SendOtpDto } from './dto/auth.dto';
 import { Request } from 'express';
 import { RefreshGuard } from 'src/guards/refresh.guard';
 import { AuthGuard } from 'src/guards/auth.guard';

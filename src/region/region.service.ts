@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 

@@ -1,14 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
 import { PaymentscheduleService } from 'src/paymentschedule/paymentschedule.service';
-import { UpdateContractDto } from './dto/update-contract.dto';
-
+import { BaseSearchDto } from 'src/Common/query.dto';
 @Injectable()
 export class ContractService {
   constructor(
@@ -19,6 +14,7 @@ export class ContractService {
   async create(createContractDto: CreateContractDto, req: Request) {
     const { products, ...body } = createContractDto;
     const user = req['user'];
+
     try {
       const customer = await this.prisma.partner.findUnique({
         where: { id: body.partnerId, role: 'CUSTOMER' },
@@ -56,7 +52,7 @@ export class ContractService {
             where: {
               id: item.productId,
               isDeleted: false,
-              stock: { gte: item.count },
+              quantity: { gte: item.count },
             },
           });
 
@@ -66,7 +62,7 @@ export class ContractService {
 
           await tx.product.update({
             where: { id: item.productId },
-            data: { stock: { decrement: item.count } },
+            data: { quantity: { decrement: item.count } },
           });
         }
 
@@ -104,11 +100,35 @@ export class ContractService {
     }
   }
 
-  async findAll() {
-    try {
-      const data = await this.prisma.contract.findMany();
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      orderBy = 'desc',
+      sortBy = 'createdAt',
+      partnerId,
+      userId,
+      status = 'PENDING',
+    } = dto;
 
-      return { data };
+    const query: any = { status };
+
+    if (userId) query.userId = userId;
+    if (partnerId) query.partnerId = partnerId;
+
+    try {
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.contract.findMany({
+          where: query,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { [sortBy]: orderBy },
+        }),
+
+        this.prisma.contract.count({ where: query }),
+      ]);
+
+      return { data, total };
     } catch (error) {
       throw error;
     }
@@ -116,7 +136,15 @@ export class ContractService {
 
   async findOne(id: string) {
     try {
-      const data = await this.prisma.contract.findUnique({ where: { id } });
+      const data = await this.prisma.contract.findUnique({
+        where: { id },
+        include: {
+          customer: true,
+          user: { select: { id: true, fullname: true, phone: true } },
+          ContractItems: { include: { product: true } },
+          Debt: true,
+        },
+      });
 
       if (!data) {
         throw new NotFoundException('Not found contract');
@@ -128,17 +156,22 @@ export class ContractService {
     }
   }
 
-  async update(id: string, updateContractDto: UpdateContractDto) {
-    try {
-      const contract = await this.prisma.contract.findUnique({
-        where: { id, status: 'PENDING' },
-      });
+  // async update(id: string, updateContractDto: UpdateContractDto) {
+  //   try {
+  //     const contract = await this.prisma.contract.findUnique({
+  //       where: { id, status: 'PENDING' },
+  //       include: { ContractItems: true },
+  //     });
 
-      if (!contract) {
-        throw new NotFoundException('Not found contract');
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     if (!contract) {
+  //       throw new NotFoundException('Not found contract');
+  //     }
+
+  //     const data = await this.prisma.$transaction((tx) => {
+  //       await;
+  //     });
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

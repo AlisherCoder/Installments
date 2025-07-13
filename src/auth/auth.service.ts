@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto, ResetPasswordDto, SendOtpDto } from './dto/auth.dto';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';

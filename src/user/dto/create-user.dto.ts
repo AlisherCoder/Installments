@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleUser } from '../../Common/enums';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'Alex Ferguson', required: true })

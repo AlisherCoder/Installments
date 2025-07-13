@@ -133,9 +133,8 @@ model Category {
 model Product {
   id          String  @id @default(uuid())
   name        String
-  price       Decimal
-  cost        Decimal @default(0)
-  stock       Int     @default(0)
+  totalPrice  Decimal
+  quantity    Int
   description String?
   unit        Units
   userId      String
@@ -148,36 +147,25 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  PurchaseItems PurchaseItems[]
   ContractItems ContractItems[]
+  Purchase      Purchase[]
 }
 
 model Purchase {
   id         String  @id @default(uuid())
   userId     String
   partnerId  String
+  productId  String
   note       String?
-  totalCount Int
+  quantity   Int
   totalPrice Decimal
   state      State   @default(DONE)
   user       User    @relation(fields: [userId], references: [id])
   seller     Partner @relation(fields: [partnerId], references: [id])
+  product    Product @relation(fields: [productId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  PurchaseItems PurchaseItems[]
-}
-
-model PurchaseItems {
-  id           String   @id @default(uuid())
-  cost         Decimal
-  previousCost Decimal?
-  count        Int
-  productId    String
-  purchaseId   String
-  product      Product  @relation(fields: [productId], references: [id])
-  purchase     Purchase @relation(fields: [purchaseId], references: [id])
 }
 
 model Contract {

@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSalaryDto } from './dto/create-salary.dto';
 import { UpdateSalaryDto } from './dto/update-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -58,9 +54,26 @@ export class SalaryService {
 
     const query: any = { state };
 
+    if (userId) query.userId = userId;
+
+    if (dateFrom || dateTo) {
+      query.createdAt = {};
+      if (dateFrom) query.createdAt.gte = new Date(dateFrom);
+      if (dateTo) query.createdAt.lte = new Date(dateTo);
+    }
+
     try {
-      const data = await this.prisma.salary.findMany();
-      const total = await this.prisma.salary.count();
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.salary.findMany({
+          where: query,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { [sortBy]: orderBy },
+          include: { Staff: true },
+        }),
+
+        this.prisma.salary.count({ where: query }),
+      ]);
 
       return { data, total };
     } catch (error) {
@@ -70,6 +83,7 @@ export class SalaryService {
 
   async update(id: string, updateSalaryDto: UpdateSalaryDto) {
     const { state } = updateSalaryDto;
+
     try {
       const salary = await this.prisma.salary.findUnique({
         where: { id },

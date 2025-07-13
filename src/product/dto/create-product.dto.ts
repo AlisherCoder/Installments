@@ -19,7 +19,12 @@ export class CreateProductDto {
   @ApiProperty({ example: 500, required: true })
   @IsNumber()
   @IsPositive()
-  price: number;
+  totalPrice: number;
+
+  @ApiProperty({ example: 10, required: true })
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
 
   @ApiProperty({ example: 'Iphone 15 lorem ipsum', required: false })
   @IsOptional()
@@ -40,4 +45,8 @@ export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
   image?: string;
+
+  @ApiProperty({ example: 'seller_id', required: true })
+  @IsUUID()
+  partnerId: string;
 }

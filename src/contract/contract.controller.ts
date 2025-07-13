@@ -1,18 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards, Query } from '@nestjs/common';
 import { ContractService } from './contract.service';
 import { CreateContractDto } from './dto/create-contract.dto';
-import { UpdateContractDto } from './dto/update-contract.dto';
 import { Request } from 'express';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { CommonApiQueries } from 'src/Common/api.decorator';
+import { ApiQuery } from '@nestjs/swagger';
+import { BaseSearchDto } from 'src/Common/query.dto';
+import { ContractStatus, State } from '@prisma/client';
 
 @Controller('contract')
 export class ContractController {
@@ -24,9 +18,19 @@ export class ContractController {
     return this.contractService.create(createContractDto, req);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.contractService.findAll();
+  @CommonApiQueries()
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['createdAt', 'totalPrice'],
+  })
+  @ApiQuery({ name: 'userId', required: false, type: String })
+  @ApiQuery({ name: 'partnerId', required: false, type: String })
+  @ApiQuery({ name: 'status', required: false, enum: ContractStatus })
+  findAll(@Query() dto: BaseSearchDto) {
+    return this.contractService.findAll(dto);
   }
 
   @Get(':id')

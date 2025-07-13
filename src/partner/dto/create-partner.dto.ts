@@ -50,11 +50,11 @@ export class CreatePartnerDto {
   @IsEnum(RolePartner)
   role: RolePartner;
 
-  // @ApiProperty({ example: 0, required: false })
-  // @IsOptional()
-  // @IsNumber()
-  // @Min(0)
-  // balance?: number;
+  @ApiProperty({ example: 0, required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  balance?: number;
 
   @ApiProperty({ example: 'Chilonzor 19', required: false })
   @IsOptional()

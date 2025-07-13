@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
-  ArrayNotEmpty,
-  IsArray,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -11,7 +8,6 @@ import {
   IsString,
   IsUUID,
   Min,
-  ValidateNested,
 } from 'class-validator';
 
 export class CreatePurchaseDto {
@@ -19,10 +15,14 @@ export class CreatePurchaseDto {
   @IsUUID()
   partnerId: string;
 
+  @ApiProperty({ example: 'productId', required: true })
+  @IsUUID()
+  productId: string;
+
   @ApiProperty({ example: 2, required: true })
   @IsInt()
   @Min(1)
-  totalCount: number;
+  quantity: number;
 
   @ApiProperty({ example: 300, required: true })
   @IsNumber()
@@ -34,30 +34,4 @@ export class CreatePurchaseDto {
   @IsString()
   @IsNotEmpty()
   note?: string;
-
-  @ApiProperty({
-    example: [
-      { cost: 150, count: 1, productId: 'productId' },
-      { cost: 150, count: 1, productId: 'productId' },
-    ],
-    required: true,
-  })
-  @IsArray()
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => PurchaseItems)
-  products: PurchaseItems[];
-}
-
-class PurchaseItems {
-  @IsNumber()
-  @IsPositive()
-  cost: number;
-
-  @IsInt()
-  @Min(0)
-  count: number;
-
-  @IsUUID()
-  productId: string;
 }

@@ -1,77 +1,55 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RolePartner, State } from '@prisma/client';
+import { State } from '@prisma/client';
 import { Request } from 'express';
+import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class PurchaseService {
   constructor(private prisma: PrismaService) {}
 
   async create(createPurchaseDto: CreatePurchaseDto, req: Request) {
-    const { products, ...body } = createPurchaseDto;
+    const { partnerId, productId, quantity, totalPrice } = createPurchaseDto;
     const user = req['user'];
+
     try {
       const seller = await this.prisma.partner.findUnique({
-        where: { id: body.partnerId, role: 'SELLER' },
+        where: { id: partnerId, role: 'SELLER' },
       });
 
       if (!seller) throw new NotFoundException('Not found seller');
 
-      const warehouse = (
-        await this.prisma.product.findMany({
-          where: { isDeleted: false },
-          select: { id: true },
-        })
-      ).map((prd) => prd.id);
+      const prd = await this.prisma.product.findUnique({
+        where: { id: productId, isDeleted: false },
+      });
 
-      for (const item of products) {
-        if (!warehouse.includes(item.productId)) {
-          throw new NotFoundException('Not found product');
-        }
-        const prd = await this.prisma.product.findUnique({
-          where: { id: item.productId },
-        });
+      if (!prd) {
+        throw new NotFoundException('Not found product');
+      }
 
-        item['previousCost'] = prd?.cost;
+      if (prd.quantity < quantity) {
+        throw new BadRequestException('Not enough product quantity');
       }
 
       const data = await this.prisma.$transaction(async (tx) => {
         const purchase = await tx.purchase.create({
           data: {
-            ...body,
             userId: user.id,
-            PurchaseItems: {
-              create: products,
-            },
+            ...createPurchaseDto,
           },
-          include: { PurchaseItems: true },
         });
 
-        for (const item of products) {
-          const prd: any = await tx.product.findUnique({
-            where: { id: item.productId, isDeleted: false },
-          });
+        await tx.product.update({
+          where: { id: productId },
+          data: { quantity: { decrement: quantity } },
+        });
 
-          const currentSum = prd.stock * prd.cost.toNumber();
-          const newSum = item.count * item.cost;
-          const avgCost = (currentSum + newSum) / (prd.stock + item.count);
-
-          await tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { increment: item.count }, cost: avgCost },
-          });
-
-          await tx.partner.update({
-            where: { id: body.partnerId },
-            data: { balance: { decrement: body.totalPrice } },
-          });
-        }
+        await tx.partner.update({
+          where: { id: partnerId },
+          data: { balance: { increment: totalPrice } },
+        });
 
         return purchase;
       });
@@ -82,11 +60,45 @@ export class PurchaseService {
     }
   }
 
-  async findAll() {
-    try {
-      const data = await this.prisma.purchase.findMany();
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      orderBy = 'desc',
+      sortBy = 'createdAt',
+      userId,
+      partnerId,
+      productId,
+      state = 'DONE',
+      dateFrom,
+      dateTo,
+    } = dto;
 
-      return { data };
+    const query: any = { state };
+
+    if (userId) query.userId = userId;
+    if (partnerId) query.partnerId = partnerId;
+    if (productId) query.productIduId;
+
+    if (dateFrom || dateTo) {
+      query.createdAt = {};
+      if (dateFrom) query.createdAt.gte = new Date(dateFrom);
+      if (dateTo) query.createdAt.lte = new Date(dateTo);
+    }
+
+    try {
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.purchase.findMany({
+          where: query,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { [sortBy]: orderBy },
+        }),
+
+        this.prisma.purchase.count({ where: query }),
+      ]);
+
+      return { data, total };
     } catch (error) {
       throw error;
     }
@@ -96,7 +108,24 @@ export class PurchaseService {
     try {
       const purchase = await this.prisma.purchase.findUnique({
         where: { id },
-        include: { PurchaseItems: true },
+        include: {
+          product: true,
+          user: {
+            select: {
+              id: true,
+              fullname: true,
+              phone: true,
+            },
+          },
+          seller: {
+            select: {
+              fullname: true,
+              phone: true,
+              secondPhone: true,
+              id: true,
+            },
+          },
+        },
       });
 
       if (!purchase) {
@@ -111,9 +140,9 @@ export class PurchaseService {
 
   async update(id: string, updatePurchaseDto: UpdatePurchaseDto) {
     const { state } = updatePurchaseDto;
+
     try {
-      if (state === State.DONE)
-        throw new BadRequestException('The purchase can only be canceled.');
+      if (state === State.DONE) throw new BadRequestException('The purchase can only be canceled.');
 
       const purchase = await this.prisma.purchase.findUnique({
         where: { id, state: 'DONE' },
@@ -127,18 +156,17 @@ export class PurchaseService {
         const purchase = await tx.purchase.update({
           where: { id },
           data: { state },
-          include: { PurchaseItems: true },
         });
 
-        for (const item of purchase.PurchaseItems) {
-          await tx.product.update({
-            where: { id: item.productId },
-            data: {
-              cost: item.previousCost?.toDecimalPlaces(),
-              stock: { decrement: item.count },
-            },
-          });
-        }
+        await tx.product.update({
+          where: { id: purchase.productId },
+          data: { quantity: { increment: purchase.quantity } },
+        });
+
+        await tx.partner.update({
+          where: { id: purchase.partnerId },
+          data: { balance: { decrement: purchase.totalPrice } },
+        });
 
         return purchase;
       });

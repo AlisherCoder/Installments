@@ -8,12 +8,17 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Request } from 'express';
+import { BaseSearchDto } from 'src/Common/query.dto';
+import { ApiQuery } from '@nestjs/swagger';
+import { State } from '@prisma/client';
+import { CommonApiQueries } from 'src/Common/api.decorator';
 
 @Controller('product')
 export class ProductController {
@@ -25,9 +30,18 @@ export class ProductController {
     return this.productService.create(createProductDto, req);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  @CommonApiQueries()
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['createdAt', 'totalPrice', 'quantity'],
+  })
+  @ApiQuery({ name: 'userId', required: false, type: String })
+  @ApiQuery({ name: 'categoryId', required: false, type: String })
+  findAll(@Query() dto: BaseSearchDto) {
+    return this.productService.findAll(dto);
   }
 
   @Get(':id')

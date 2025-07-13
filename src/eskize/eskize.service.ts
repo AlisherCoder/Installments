@@ -13,13 +13,10 @@ export class EskizeService {
 
   async auth() {
     try {
-      const { data: response } = await axios.post(
-        `${this.baseUrl}/auth/login`,
-        {
-          email: this.email,
-          password: this.password,
-        },
-      );
+      const { data: response } = await axios.post(`${this.baseUrl}/auth/login`, {
+        email: this.email,
+        password: this.password,
+      });
 
       this.token = response?.data?.token;
     } catch (error) {

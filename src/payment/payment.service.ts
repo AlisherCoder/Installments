@@ -1,12 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { PaymentType, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class PaymentService {
@@ -182,11 +179,46 @@ export class PaymentService {
     }
   }
 
-  async findAll() {
-    try {
-      const data = await this.prisma.payment.findMany();
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      orderBy = 'desc',
+      sortBy = 'createdAt',
+      userId,
+      partnerId,
+      dateFrom,
+      dateTo,
+      paymentMethod,
+      paymentType,
+    } = dto;
 
-      return { data };
+    const query: any = {};
+
+    if (userId) query.userId = userId;
+    if (partnerId) query.partnerId = partnerId;
+    if (paymentMethod) query.paymentMethod = paymentMethod;
+    if (paymentType) query.paymentType = paymentType;
+
+    if (dateFrom || dateTo) {
+      query.createdAt = {};
+      if (dateFrom) query.createdAt.gte = new Date(dateFrom);
+      if (dateTo) query.createdAt.lte = new Date(dateTo);
+    }
+
+    try {
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.payment.findMany({
+          where: query,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { [sortBy]: orderBy },
+        }),
+
+        this.prisma.payment.count({ where: query }),
+      ]);
+
+      return { data, total };
     } catch (error) {
       throw error;
     }
@@ -194,7 +226,14 @@ export class PaymentService {
 
   async findOne(id: string) {
     try {
-      const payment = await this.prisma.payment.findUnique({ where: { id } });
+      const payment = await this.prisma.payment.findUnique({
+        where: { id },
+        include: {
+          user: { select: { id: true, fullname: true, phone: true } },
+          partner: true,
+          debt: true,
+        },
+      });
 
       if (!payment) {
         throw new NotFoundException('Not found payment');

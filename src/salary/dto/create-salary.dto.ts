@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUUID,
-  MaxLength,
-} from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateSalaryDto {
   @ApiProperty({ example: 'userId', required: true })

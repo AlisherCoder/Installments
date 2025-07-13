@@ -5,45 +5,85 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
 import { join } from 'path';
 import * as fs from 'fs';
+import { PurchaseService } from 'src/purchase/purchase.service';
+import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private purchaseService: PurchaseService,
+  ) {}
 
   async create(createProductDto: CreateProductDto, req: Request) {
-    const { categoryId } = createProductDto;
+    const { partnerId, ...body } = createProductDto;
     const user = req['user'];
+
     try {
       const category = await this.prisma.category.findUnique({
-        where: { id: categoryId, isDeleted: false },
+        where: { id: body.categoryId, isDeleted: false },
       });
 
       if (!category) {
-        throw new NotFoundException(
-          'Not found category or category is deleted',
-        );
+        throw new NotFoundException('Not found category or category is deleted');
       }
 
       const data = await this.prisma.product.create({
-        data: { ...createProductDto, userId: user.id },
+        data: { ...body, userId: user.id },
       });
 
-      return { data };
+      const purchase = await this.purchaseService.create(
+        {
+          partnerId,
+          productId: data.id,
+          quantity: data.quantity,
+          totalPrice: data.totalPrice.toNumber(),
+        },
+        req,
+      );
+
+      return { data, purchase };
     } catch (error) {
       throw error;
     }
   }
 
-  async findAll() {
-    try {
-      const data = await this.prisma.product.findMany({
-        include: { category: true },
-        where: { isDeleted: false },
-      });
+  async findAll(dto: BaseSearchDto) {
+    const {
+      page = 1,
+      limit = 10,
+      orderBy = 'desc',
+      sortBy = 'createdAt',
+      categoryId,
+      userId,
+      search,
+    } = dto;
 
-      const total = await this.prisma.product.count({
-        where: { isDeleted: false },
-      });
+    const query: any = {};
+
+    if (search) {
+      const trimmed = search.trim();
+      query.name = {
+        contains: trimmed,
+        mode: 'insensitive',
+      };
+    }
+
+    if (userId) query.userId = userId;
+    if (categoryId) query.categoryId = categoryId;
+
+    try {
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.product.findMany({
+          where: query,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { [sortBy]: orderBy },
+          include: { createdBy: { select: { id: true, fullname: true, phone: true } } },
+        }),
+
+        this.prisma.product.count({ where: query }),
+      ]);
 
       return { data, total };
     } catch (error) {
@@ -55,6 +95,10 @@ export class ProductService {
     try {
       const data = await this.prisma.product.findUnique({
         where: { id, isDeleted: false },
+        include: {
+          createdBy: { select: { id: true, fullname: true, phone: true } },
+          Purchase: true,
+        },
       });
 
       if (!data) {
@@ -69,6 +113,7 @@ export class ProductService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
     const { categoryId, image } = updateProductDto;
+
     try {
       const product = await this.prisma.product.findUnique({
         where: { id, isDeleted: false },

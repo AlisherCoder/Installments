@@ -1,11 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class LoginDto {
   @ApiProperty({ example: '+998951234567', required: true })
