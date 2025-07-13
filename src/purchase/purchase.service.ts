@@ -43,7 +43,7 @@ export class PurchaseService {
 
         await tx.product.update({
           where: { id: productId },
-          data: { quantity: { decrement: quantity } },
+          data: { quantity: { increment: quantity }, totalPrice: { increment: totalPrice } },
         });
 
         await tx.partner.update({

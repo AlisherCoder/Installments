@@ -29,7 +29,7 @@ export class ProductService {
       }
 
       const data = await this.prisma.product.create({
-        data: { ...body, userId: user.id },
+        data: { ...body, userId: user.id, totalPrice: 0, quantity: 0 },
       });
 
       const purchase = await this.purchaseService.create(

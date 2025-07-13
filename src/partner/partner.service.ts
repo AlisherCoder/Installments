@@ -18,6 +18,7 @@ export class PartnerService {
   async create(createPartnerDto: CreatePartnerDto, req: Request) {
     const { phone, regionId, location } = createPartnerDto;
     const user = req['user'];
+
     try {
       const partner = await this.prisma.partner.findUnique({
         where: { phone },
