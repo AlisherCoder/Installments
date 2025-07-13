@@ -3,12 +3,11 @@ import { CreateSalaryDto } from './dto/create-salary.dto';
 import { UpdateSalaryDto } from './dto/update-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { State } from '@prisma/client';
-import { count } from 'console';
 import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class SalaryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createSalaryDto: CreateSalaryDto) {
     const { userId } = createSalaryDto;

@@ -10,7 +10,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CategoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createCategoryDto: CreateCategoryDto) {
     const { name } = createCategoryDto;
@@ -37,6 +37,7 @@ export class CategoryService {
     try {
       const data = await this.prisma.category.findMany({
         select: { id: true, name: true, time: true },
+        where: { isDeleted: false }
       });
 
       return { data };

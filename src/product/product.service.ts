@@ -65,7 +65,7 @@ export class ProductService {
       search,
     } = dto;
 
-    const query: any = {};
+    const query: any = { isDeleted: false };
 
     if (search) {
       const trimmed = search.trim();

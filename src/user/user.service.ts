@@ -12,7 +12,7 @@ import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto) {
     const { phone, password } = createUserDto;
