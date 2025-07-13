@@ -29,10 +29,6 @@ export class PurchaseService {
         throw new NotFoundException('Not found product');
       }
 
-      if (prd.quantity < quantity) {
-        throw new BadRequestException('Not enough product quantity');
-      }
-
       const data = await this.prisma.$transaction(async (tx) => {
         const purchase = await tx.purchase.create({
           data: {
