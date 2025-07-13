@@ -8,7 +8,7 @@ import { BaseSearchDto } from 'src/Common/query.dto';
 
 @Injectable()
 export class PurchaseService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createPurchaseDto: CreatePurchaseDto, req: Request) {
     const { partnerId, productId, quantity, totalPrice } = createPurchaseDto;
