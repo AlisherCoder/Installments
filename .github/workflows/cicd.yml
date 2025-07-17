@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           port: 22
-          source: 'dist/**,package.json,ecosystem.config.js,prisma/**'
+          source: 'dist/**,package.json,ecosystem.config.js,prisma/**locales/**'
           target: '/home/ubuntu/nestjs-app'
 
       - name: SSH Deploy Commands
