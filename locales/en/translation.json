@@ -1,51 +1,14 @@
 {
   "auth": {
     "forgot_password": {
-      "get_sms": "Get SMSe",
-      "enter_your_number": "Enter your phone neumber",
-      "enter_verification_code": "Enter verification ceode",
-      "continue": "Resete",
-      "confirm_password": "Confirm passwoerd"
-    },
-    "login": {
-      "contact": "Conetacteee",
-      "password": "Passwords",
-      "send_via_sms": "Receive visda message?"
+      "continue": "dsds",
+      "confirm_password": "sdfs",
+      "enter_verification_code": "sfdsf",
+      "enter_your_number": "sdfs",
+      "get_sms": "sdfdsf",
+      "password": "sdf",
+      "reset_password": "sdfs"
     }
   },
-  "change_pin_code": {
-    "pin_code_placeholder": "shouldsdfs be 6 digits",
-    "new_pin_code": "New psdfin-code"
-  },
-  "change_password": {
-    "form": {
-      "old_password_placeholder": "Old pasfssdfsword",
-      "old_password": "Old fsf",
-      "new_password_placeholder": "New pdsfsassword",
-      "new_password": "New pdsfsassword"
-    }
-  },
-  "common": {
-    "autocomplete": {
-      "by_category": "By categorysdfs"
-    },
-    "button": {
-      "apply": "Applydsf",
-      "add": "Addfsdf",
-      "active": "Remove from blsdfsacklist",
-      "accept": "Acceptfsfsff",
-      "archive": "Archivesdfs",
-      "automatic_filling": "Autofillsdf",
-      "back": "Backsdf",
-      "export": "Exportsdfsdf",
-      "export_csv": "Export CSVdsf",
-      "export_to_count": "Export to countsfdsfsd",
-      "export_xlsx": "Export XLSXffsf",
-      "formation": "dff",
-      "go_back": "Backfdfd"
-    },
-    "autocomplete_product": {
-      "yellow_line": "Yellow line (50)f"
-    }
-  }
+  "app": "ds"
 }
