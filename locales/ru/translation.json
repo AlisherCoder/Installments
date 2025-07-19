@@ -1,22 +1,11 @@
 {
   "auth": {
-    "login": {
-      "contact": "Контактhdhsdfs",
-      "confirmation_code": "Код подтверждfdsfеhfghния",
-      "continue": "Войтиsdf",
-      "enter_your_password": "Номер телефонаsfs",
-      "forgot_password": "Забыли парольfsd",
-      "password": "Парольsdf"
-    },
     "forgot_password": {
-      "reset_password": "Забыли парольghhgh,",
-      "password": "h",
-      "length_should_be_4": "Длина кода должнаghgh быть не менее 4",
-      "get_sms": "Подтверждениеghg",
-      "enter_your_number": "Номер телефонаhgh",
-      "enter_verification_code": "Введите код подтвеghрждения",
-      "continue": "Сбросgh",
-      "confirm_password": "Подтвердите парольghg"
+      "continue": "sfsdf",
+      "confirm_password": "sdfds",
+      "enter_verification_code": "sdffs",
+      "enter_your_number": "sfdsf"
     }
-  }
+  },
+  "app": "sdf"
 }
