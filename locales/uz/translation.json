@@ -1,3 +1,64 @@
 {
-  "app": "rwrwetewt"
+  "auth": {
+    "forgot_password": {
+      "confirm_password": "Parolni tasdiqlange",
+      "continue": "Tiklashe",
+      "enter_verification_code": "Tasdiqlash kodini kiritinge",
+      "enter_your_number": "Telefon raqame",
+      "get_sms": "Tasdiqlashe",
+      "password": "Parole",
+      "reset_password": "Parolni tiklashe"
+    },
+    "login": {
+      "confirmation_code": "Tasdiqlash kodie",
+      "contact": "Aloqaee",
+      "remember_me": "Eslab qolishfsdf",
+      "rights_reserved": "© 2023 Bito. Barcha huquqdsflar himoyalangan.",
+      "send": "yuborildidsfs",
+      "send_via_sms": "orqali yuborilsinmi?sfsd"
+    }
+  },
+  "change_password": {
+    "form": {
+      "old_password": "fsdf",
+      "new_password_placeholder": "sdfs",
+      "new_password": "sf",
+      "confirmation_password_placeholder": "sdfs",
+      "confirmation_password": "sfs",
+      "old_password_placeholder": "sfs"
+    }
+  },
+  "change_pin_code": {
+    "new_pin_code": "sdf",
+    "pin_code_placeholder": "sdf"
+  },
+  "common": {
+    "add_all": "Barchasini belgilashsdfds",
+    "add_product": "Mahsulot qo'shishfsdf",
+    "autocomplete": {
+      "all": "Barchasisdfsd",
+      "by_category": "Kategoriya bo'yichasdfsdfs"
+    },
+    "button": {
+      "add": "Qo'shishsdfs",
+      "apply": "Qo'llashsfds",
+      "approve": "Tasdiqlashsdf",
+      "archive": "Arxivlashdsds",
+      "automatic_filling": "Avtomatik to'ldirishsdfdsf",
+      "back": "Ortgasdfsf",
+      "go_back": "Ortga qaytishsdffsdf",
+      "finish": "Yakunlashfsdfs",
+      "export_xlsx": "Export XLSXffsd",
+      "export_to_count": "Sanash uchun yuklab df",
+      "export_csv": "Export ddsf",
+      "export": "Exportdfdfff",
+      "expense": "Chiqimff",
+      "update": "Yangilashsdfs",
+      "unarchive": "Arxivdan chiqarishsfs",
+      "start": "Boshlashdfss",
+      "settings": "Sozlashsdf",
+      "save_close": "Saqlash va yopishdsfsd",
+      "save_changes": "Saqlashsdfsd"
+    }
+  }
 }
