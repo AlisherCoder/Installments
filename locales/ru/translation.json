@@ -4,7 +4,10 @@
       "continue": "sfsdf",
       "confirm_password": "sdfds",
       "enter_verification_code": "sdffs",
-      "enter_your_number": "sfdsf"
+      "enter_your_number": "sfdsf",
+      "get_sms": "3636464",
+      "password": "645646",
+      "reset_password": "45646"
     }
   },
   "app": "sdf"
