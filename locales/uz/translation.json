@@ -1,3 +1,14 @@
 {
-  "app": "sdsf"
+  "app": "sdsf",
+  "auth": {
+    "forgot_password": {
+      "confirm_password": "sdfsf",
+      "continue": "sdfds",
+      "enter_verification_code": "sdfs",
+      "enter_your_number": "sdfs",
+      "get_sms": "sdfsf",
+      "password": "sdfs",
+      "reset_password": "fsfds"
+    }
+  }
 }
