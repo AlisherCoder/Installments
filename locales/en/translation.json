@@ -2456,5 +2456,26 @@
   "total_amount": "total_amount",
   "income": "income",
   "customer_phone_number": "customer_phone_number",
-  "supplier_phone_number": "supplier_phone_number"
+  "supplier_phone_number": "supplier_phone_number",
+  "accepted": "khfkf",
+  "auto_create": {
+    "payment_types": {
+      "exchange": "eweww",
+      "currency_lose": "rer",
+      "change_income": "reter",
+      "change_expense": "ter",
+      "currency_win": "ret",
+      "exchange_lose": "etet",
+      "exchange_method": "erte",
+      "exchange_method_lose": "eter",
+      "exchange_method_win": "ert",
+      "exchange_win": "erte"
+    }
+  },
+  "Daromad": "sf",
+  "Yalpi daromad": "fds",
+  "Yakunlangan sana": "sdfsd",
+  "To'lov usuli": "dsfd",
+  "To'lov turi": "sfd",
+  "Ta`minotchi": "dfds"
 }
