@@ -2636,5 +2636,6 @@
   "progress": "progress",
   "warehouse": "warehouse",
   "customer_phone_number": "customer_phone_number",
-  "supplier_phone_number": "supplier_phone_number"
+  "supplier_phone_number": "supplier_phone_number",
+  "accepted": "dsfs"
 }
