@@ -1709,7 +1709,7 @@
     "produced": "Произведённое количество",
     "produced_cost": "Себестоимость произведённого",
     "cost_per_item": "Себестоимость за единицу",
-    "extra_cost": "����ополнительные расходы"
+    "extra_cost": "������ополнительные расходы"
   },
   "tg_bot": {
     "select_available_command": "Пожалуйста, выберите одну из доступных команд.",
@@ -2638,5 +2638,6 @@
   "customer_phone_number": "customer_phone_number",
   "supplier_phone_number": "supplier_phone_number",
   "accepted": "dsfs",
-  "№": "№"
+  "№": "№",
+  "Chiqim": "Расходы"
 }
