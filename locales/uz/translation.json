@@ -321,6 +321,7 @@
   "bifoza_subscription_notification_before_expire": "Assalomu alaykum, {{{customer_name}}}.\n\nSizning {{{domain}}} Bifoza platformasi litsenziyangiz {{{expiration_date}}} da tugaydi. Xizmatni davom ettirish uchun litsenziyangizni yangilashni unutmang.\n\nAgar savollaringiz bo'lsa yoki yordam kerak bo'lsa, biz bilan aloqaga chiqishingiz mumkin.\n\nHurmat bilan,\nBifoza jamoasi \n{{{phone_number}}}",
   "bito_subscription_notification_on_expire": "Assalomu alaykum, {{{customer_name}}}.\n\nSizning {{{domain}}} Bito platformasi litsenziyangiz {{{expiration_date}}} da tugadi. Xizmatni davom ettirish uchun litsenziyangizni yangilashni unutmang.\n\nAgar savollaringiz bo'lsa yoki yordam kerak bo'lsa, biz bilan aloqaga chiqishingiz mumkin.\n\nHurmat bilan,\nBito jamoasi \n{{{phone_number}}}",
   "bifoza_subscription_notification_on_expire": "Assalomu alaykum, {{{customer_name}}}.\n\nSizning {{{domain}}} Bifoza platformasi litsenziyangiz {{{expiration_date}}} da tugadi. Xizmatni davom ettirish uchun litsenziyangizni yangilashni unutmang.\n\nAgar savollaringiz bo'lsa yoki yordam kerak bo'lsa, biz bilan aloqaga chiqishingiz mumkin.\n\nHurmat bilan,\nBifoza jamoasi \n{{{phone_number}}}",
+  "subscription_success": "🌟 Assalomu alaykum, {{{customer_name}}}! Sizning {{{domain}}} platformasidagi obuna muddatingiz {{{expiration_date}}} gacha faollashdi. Siz bilan birga ekanligimizdan xursandmiz! 😊",
   "total_income": "Jami kirim",
   "total_expense": "Jami chiqim",
   "last_balance": "Qoldiq summasi",
@@ -354,6 +355,9 @@
   "closing_balance": "Davr yakunidagi balans",
   "total_used_cashback": "Jami ishlatilgan cashback",
   "total_cashback_received": "Jami olingan cashback",
+  "currencies": {
+    "uzs": "so'm"
+  },
   "table_columns": {
     "used_date": "Materialarni hisobdan chiqarish sanasi",
     "number": "Raqami",
@@ -629,6 +633,7 @@
     "61010": "Hisob-faktura bekor qilingan",
     "61011": "Savdo mijozsiz qilingan, iltimos savdoni bekor qiling",
     "61013": "Tranzaksiya ustida amal bajarilmoqda",
+    "61014": "Komissiya stavkasi ruxsat etilgan chegaradan tashqarida",
     "62000": "Ushbu ma'lumotlar bilan to'lov turi topilmadi",
     "62001": "Ushbu ma'lumotlarga ega to'lov turi allaqachon mavjud",
     "62002": "Ushbu ma'lumotlarga ega to'lov turi allaqachon mavjud",
@@ -2426,7 +2431,8 @@
     "statistics_production_by_responsible_and_product": "Mahsulot ishlab chiqarish xodim bo'yicha",
     "sales": "Sotuvlar",
     "total_amount": "Jami miqdor",
-    "unknown": "Noma'lum"
+    "unknown": "Noma'lum",
+    "subscriptions": "Obunalar"
   },
   "import": {
     "price": "narxi",
@@ -2564,6 +2570,11 @@
   "Hodim": "Hodim",
   "3-shaxs": "3-shaxs",
   "user_type": "Shaxs turi",
+  "username": "Username",
+  "dealer": "Diller",
+  "license_count": "Litsenziya soni",
+  "is_paid": "Pullik",
+  "is_free": "Be'pul",
   "delivery": {
     "order_source_type": {
       "trade": "Savdo",
